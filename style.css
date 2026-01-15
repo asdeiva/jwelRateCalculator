@@ -47,7 +47,7 @@ body {
     position: relative;
 }
 
-/* Base Styles (same as before) */
+/* Base Styles */
 .background-blobs { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
 .blob { position: absolute; filter: blur(80px); opacity: 0.4; border-radius: 50%; animation: move 20s infinite alternate; }
 .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #4f46e5; }
@@ -109,9 +109,7 @@ body:not(.silver-mode) .metal-btn.active[data-metal="gold"] {
     color: var(--primary-color);
 }
 
-.settings-btn {
-    display: none;
-}
+.settings-btn { display: none; }
 
 /* Live Price Section */
 .live-price-section {
@@ -203,18 +201,6 @@ body:not(.silver-mode) .result-card { border-color: rgba(251, 191, 36, 0.3); }
 .result-row.total { margin-bottom: 0; }
 .result-row.total span:first-child { font-size: 1.1rem; font-weight: 600; color: var(--text-color); }
 .result-row.total span:last-child { font-size: 2rem; font-weight: 700; color: var(--primary-color); text-shadow: 0 0 20px rgba(255, 255, 255, 0.1); }
-
-/* Modal */
-.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; background: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
-.modal.visible { opacity: 1; pointer-events: auto; }
-.modal-content { width: 90%; max-width: 400px; padding: 24px; background: #1e293b; border: 1px solid var(--glass-border); border-radius: var(--radius-lg); transform: translateY(20px); transition: transform 0.3s ease; }
-.modal.visible .modal-content { transform: translateY(0); }
-.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.modal-header h2 { font-size: 1.5rem; color: var(--text-color); }
-.close-modal { font-size: 1.5rem; color: var(--text-muted); cursor: pointer; }
-.modal-body { display: flex; flex-direction: column; gap: 20px; }
-.helper-text { font-size: 0.8rem; color: var(--text-muted); }
-.helper-text a { color: var(--primary-color); text-decoration: none; }
 
 /* Responsive */
 @media (max-width: 480px) {

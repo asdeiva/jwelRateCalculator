@@ -20,11 +20,6 @@ const elements = {
     metalBtns: document.querySelectorAll('.metal-btn'),
     goldOptions: document.getElementById('goldOptions'),
     silverOptions: document.getElementById('silverOptions'),
-    settingsBtn: document.getElementById('settingsBtn'),
-    settingsModal: document.getElementById('settingsModal'),
-    closeSettingsBtn: document.getElementById('closeSettingsBtn'),
-    saveSettingsBtn: document.getElementById('saveSettingsBtn'),
-    apiKeyInput: document.getElementById('apiKeyInput'),
     fetchRateBtn: document.getElementById('fetchRateBtn'),
     metalLabel: document.getElementById('metalLabel'),
     appTitle: document.getElementById('appTitle')
@@ -36,10 +31,6 @@ let rates = {
     gold: { 24: '', 22: '', 18: '' },
     silver: { 999: '', 925: '' }
 };
-
-// Load API Key
-let apiKey = localStorage.getItem('goldApiKey') || '';
-elements.apiKeyInput.value = apiKey;
 
 // Formatting
 function formatCurrency(amount) {
@@ -56,9 +47,6 @@ function getFloat(value) {
 
 function getSelectedPurity() {
     const checked = document.querySelector('input[name="purity"]:checked');
-    // If we just switched metals, the checked input might be hidden or invalid,
-    // so we need to ensure we get the right one for the current metal.
-    // However, logic below handles checking default on switch.
     return checked ? checked.value : null;
 }
 
@@ -126,7 +114,6 @@ function switchMetal(metal) {
     // 2. Update Theme
     if (metal === 'silver') {
         document.body.classList.add('silver-mode');
-        // elements.appTitle.textContent = "Silver Rate Calculator";
         elements.metalLabel.textContent = "Silver";
         elements.goldOptions.classList.add('hidden');
         elements.silverOptions.classList.remove('hidden');
@@ -151,30 +138,6 @@ function switchMetal(metal) {
     
     updateCalculations();
 }
-
-// ---------------------------
-// Settings Modal
-// ---------------------------
-function toggleModal(show) {
-    if (show) {
-        elements.settingsModal.classList.add('visible');
-        elements.apiKeyInput.focus();
-    } else {
-        elements.settingsModal.classList.remove('visible');
-    }
-}
-
-elements.settingsBtn.addEventListener('click', () => toggleModal(true));
-elements.closeSettingsBtn.addEventListener('click', () => toggleModal(false));
-elements.saveSettingsBtn.addEventListener('click', () => {
-    apiKey = elements.apiKeyInput.value.trim();
-    localStorage.setItem('goldApiKey', apiKey);
-    toggleModal(false);
-});
-// Close on click outside
-elements.settingsModal.addEventListener('click', (e) => {
-    if (e.target === elements.settingsModal) toggleModal(false);
-});
 
 // ---------------------------
 // Fetch Live Rates (Web Scraping)
