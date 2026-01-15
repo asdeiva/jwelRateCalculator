@@ -382,5 +382,186 @@ elements.resetBtn.addEventListener('click', () => {
     updateCalculations();
 });
 
+// ---------------------------
+// Bill / Invoice Logic
+// ---------------------------
+let billItems = [];
+
+// DOM Elements for Bill
+elements.addToBillBtn = document.getElementById('addToBillBtn');
+elements.billSection = document.getElementById('billSection');
+elements.billItemsList = document.getElementById('billItemsList');
+elements.grandTotalDisplay = document.getElementById('grandTotalDisplay');
+elements.shareBtn = document.getElementById('shareBtn');
+
+elements.addToBillBtn.addEventListener('click', () => {
+    // Validate inputs
+    const weight = getFloat(elements.weightInput.value);
+    if (weight <= 0) {
+        alert("Please enter a valid weight!");
+        return;
+    }
+
+    // Capture current calculation state
+    // We assume updateCalculations() has run and DOM is correct, but safer to recalculate numbers
+    const rate = getFloat(elements.rateInput.value);
+    
+    // Wastage
+    let wastageAmount = 0;
+    const wastageInputVal = getFloat(elements.wastageInput.value);
+    if (elements.wastageTypeToggle.checked) { // Fixed
+        wastageAmount = wastageInputVal;
+    } else {
+        wastageAmount = (rate * weight) * (wastageInputVal / 100);
+    }
+    
+    // GST
+    let gstAmount = 0;
+    const baseTotal = (rate * weight) + wastageAmount;
+    if (elements.gstToggle.checked) {
+        const gstPercent = getFloat(elements.gstPercentInput.value);
+        gstAmount = baseTotal * (gstPercent / 100);
+    }
+    
+    const total = baseTotal + gstAmount;
+    
+    // Item Description
+    const metalFormatted = currentMetal === 'gold' ? 'Gold' : 'Silver';
+    const purity = getSelectedPurity();
+    let purityLabel = purity;
+    if (currentMetal === 'gold') purityLabel += 'K';
+    
+    const item = {
+        id: Date.now(),
+        metal: currentMetal, // Store raw value 'gold'/'silver'
+        metalFormatted: metalFormatted,
+        purity: purity, // raw value like 24, 22
+        purityLabel: purityLabel,
+        weight: weight,
+        rate: rate,
+        wastageVal: wastageInputVal,
+        isFixedWastage: elements.wastageTypeToggle.checked,
+        gstPercent: elements.gstToggle.checked ? getFloat(elements.gstPercentInput.value) : 0,
+        isGstEnabled: elements.gstToggle.checked,
+        wastage: wastageAmount,
+        gst: gstAmount,
+        total: total
+    };
+
+    billItems.push(item);
+    renderBill();
+
+    // Scroll to bill
+    elements.billSection.scrollIntoView({ behavior: 'smooth' });
+});
+
+function renderBill() {
+    if (billItems.length === 0) {
+        elements.billSection.classList.add('hidden');
+        return;
+    }
+
+    elements.billSection.classList.remove('hidden');
+    elements.billItemsList.innerHTML = '';
+    
+    // Update Date Display
+    const now = new Date();
+    document.getElementById('billDate').textContent = now.toLocaleString('en-IN', {
+        day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+    
+    let grandTotal = 0;
+
+    billItems.forEach(item => {
+        grandTotal += item.total;
+        
+        const itemEl = document.createElement('div');
+        itemEl.className = 'bill-item';
+        itemEl.innerHTML = `
+            <div class="bill-details">
+                <span class="bill-row-main">${item.metalFormatted} ${item.purityLabel} - ${item.weight}g</span>
+                <span class="bill-row-sub">Rate: ${item.rate} | VA: ${item.wastage.toFixed(0)} | GST: ${item.gst.toFixed(0)}</span>
+            </div>
+            <div style="display:flex; align-items:center;">
+                <span class="bill-price">${formatCurrency(item.total)}</span>
+                <button class="icon-btn edit-btn" onclick="editBillItem(${item.id})" title="Edit">✏️</button>
+                <button class="icon-btn delete-item-btn" onclick="removeBillItem(${item.id})" title="Delete">&times;</button>
+            </div>
+        `;
+        elements.billItemsList.appendChild(itemEl);
+    });
+
+    elements.grandTotalDisplay.textContent = formatCurrency(grandTotal);
+}
+
+// Edit Item
+window.editBillItem = (id) => {
+    const item = billItems.find(i => i.id === id);
+    if (!item) return;
+
+    // 1. Switch Metal
+    if (currentMetal !== item.metal) {
+        switchMetal(item.metal);
+    }
+
+    // 2. Set Purity
+    // Need to wait/ensure options are visible? switchMetal handles visibility.
+    // We need to check the specific radio button.
+    const radio = document.querySelector(`input[name="purity"][value="${item.purity}"]`);
+    if (radio) radio.checked = true;
+
+    // 3. Set Inputs
+    elements.rateInput.value = item.rate;
+    elements.weightInput.value = item.weight;
+    
+    // 4. Set Wastage
+    elements.wastageTypeToggle.checked = item.isFixedWastage;
+    // Trigger change event manually to update placeholder/UI
+    const event = new Event('change');
+    elements.wastageTypeToggle.dispatchEvent(event);
+    elements.wastageInput.value = item.wastageVal;
+
+    // 5. Set GST
+    elements.gstToggle.checked = item.isGstEnabled;
+    elements.gstPercentInput.value = item.gstPercent || 3;
+    
+    // 6. Update Calculations
+    updateCalculations();
+
+    // 7. Remove from bill (move to "staging")
+    removeBillItem(id);
+
+    // 8. Scroll back to top
+    document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
+};
+
+// Expose globally for onclick
+window.removeBillItem = (id) => {
+    billItems = billItems.filter(i => i.id !== id);
+    renderBill();
+};
+
+elements.shareBtn.addEventListener('click', () => {
+    if (billItems.length === 0) return;
+
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('en-IN');
+    const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+
+    let text = `*Jewellery Estimate*\n📅 ${dateStr}  ⏰ ${timeStr}\n------------------\n`;
+    billItems.forEach(item => {
+        text += `${item.metal} ${item.purity} (${item.weight}g)\n`;
+        text += `Price: ${formatCurrency(item.total)}\n\n`;
+    });
+    
+    const grandTotal = billItems.reduce((sum, i) => sum + i.total, 0);
+    text += `------------------\n*Grand Total: ${formatCurrency(grandTotal)}*\n`;
+    text += `\nCalculated via Gold Rate App`;
+
+    // Important: encodeURIComponent handles special chars like \n correctly
+    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+});
+
 // Initial
 updateCalculations();

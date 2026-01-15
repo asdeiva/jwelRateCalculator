@@ -8,6 +8,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log('Service Worker Registered'))
+                .catch(err => console.log('SW Registration Failed', err));
+        }
+    </script>
 </head>
 <body>
     <div class="background-blobs">
@@ -45,7 +53,8 @@
             <!-- Live Price Fetch -->
             <div class="live-price-section">
                 <button id="fetchRateBtn" class="btn-fetch-rate">
-                    <span class="icon">📡</span> Fetch Live <span id="metalLabel">Gold</span> Rate
+                    <span class="spinner" style="display:none;"></span> 
+                    <span class="btn-text">Fetch Live Rate</span>
                 </button>
             </div>
 
@@ -173,6 +182,32 @@
                 <span>Final Total</span>
                 <span id="finalTotalDisplay">₹ 0.00</span>
             </div>
+        </div>
+        
+        <!-- Main Actions -->
+        <div class="actions" style="margin-top: 10px;">
+             <!-- Reset is already above, moving Add to Bill here for prominence -->
+            <button id="addToBillBtn" class="btn-primary" style="width:100%;">Add to Bill</button>
+        </div>
+
+        <!-- Bill Section (Hidden by default until item added) -->
+        <div id="billSection" class="glass bill-card hidden">
+            <div class="bill-header">
+                <h3>Bill Summary</h3>
+                <span id="billDate" class="bill-date"></span>
+            </div>
+            <div class="bill-items-list" id="billItemsList">
+                <!-- Items will be injected here -->
+            </div>
+            <div class="divider"></div>
+            <div class="result-row grand-total">
+                <span>Grand Total</span>
+                <span id="grandTotalDisplay">₹ 0.00</span>
+            </div>
+            <!-- Share Button -->
+            <button id="shareBtn" class="btn-share">
+                <span class="icon">📱</span> Share Quote
+            </button>
         </div>
 
 
