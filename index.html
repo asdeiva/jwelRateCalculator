@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gold & Silver Rate Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <main class="container">
+        <header>
+            <h1 id="appTitle">Gold Rate Calculator</h1>
+            <p>Precise estimation for your jewellery</p>
+        </header>
+
+        <div class="calculator-card glass">
+            
+            <!-- Metal Selection -->
+            <div class="metal-selector-wrapper">
+                <div class="metal-selector">
+                    <button class="metal-btn active" data-metal="gold" id="btnGold">
+                        <span class="metal-icon">👑</span> Gold
+                    </button>
+                    <button class="metal-btn" data-metal="silver" id="btnSilver">
+                        <span class="metal-icon">💍</span> Silver
+                    </button>
+                </div>
+                <button class="settings-btn" id="settingsBtn" title="API Settings">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Live Price Fetch -->
+            <div class="live-price-section">
+                <button id="fetchRateBtn" class="btn-fetch-rate">
+                    <span class="icon">📡</span> Fetch Live <span id="metalLabel">Gold</span> Rate
+                </button>
+            </div>
+
+            <!-- Purity Selection -->
+            <section class="input-group">
+                <label class="section-label">Purity / Type</label>
+                
+                <!-- Gold Options -->
+                <div class="gold-type-selector purity-options" id="goldOptions">
+                    <label class="radio-card">
+                        <input type="radio" name="purity" value="24" checked>
+                        <span class="card-content">
+                            <span class="type-name">24K</span>
+                            <span class="type-desc">99.9%</span>
+                        </span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="purity" value="22">
+                        <span class="card-content">
+                            <span class="type-name">22K</span>
+                            <span class="type-desc">Jewellery</span>
+                        </span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="purity" value="18">
+                        <span class="card-content">
+                            <span class="type-name">18K</span>
+                            <span class="type-desc">Stone</span>
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Silver Options -->
+                <div class="gold-type-selector purity-options hidden" id="silverOptions">
+                    <label class="radio-card">
+                        <input type="radio" name="purity" value="999">
+                        <span class="card-content">
+                            <span class="type-name">Fine</span>
+                            <span class="type-desc">999</span>
+                        </span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="purity" value="925">
+                        <span class="card-content">
+                            <span class="type-name">Sterling</span>
+                            <span class="type-desc">925</span>
+                        </span>
+                    </label>
+                </div>
+            </section>
+
+            <!-- Rate and Weight -->
+            <div class="row">
+                <div class="input-wrapper">
+                    <label for="rateInput">Rate per Gram (₹)</label>
+                    <input type="number" id="rateInput" placeholder="0.00" min="0" step="any">
+                </div>
+                <div class="input-wrapper">
+                    <label for="weightInput">Weight (grams)</label>
+                    <input type="number" id="weightInput" placeholder="0.00" min="0" step="0.01">
+                </div>
+            </div>
+
+            <hr class="divider">
+
+            <!-- Wastage -->
+            <section class="input-group">
+                <div class="flex-header">
+                    <label class="section-label">Wastage / Making Charges</label>
+                    <div class="toggle-switch-wrapper">
+                        <span class="toggle-label active" id="wastagePercentLabel">%</span>
+                        <label class="switch">
+                            <input type="checkbox" id="wastageTypeToggle">
+                            <span class="slider round"></span>
+                        </label>
+                        <span class="toggle-label" id="wastageFixedLabel">₹</span>
+                    </div>
+                </div>
+                <div class="input-wrapper">
+                    <input type="number" id="wastageInput" placeholder="Enter percentage (e.g. 12)" min="0" step="0.01">
+                </div>
+            </section>
+
+            <!-- GST -->
+            <section class="input-group">
+                <div class="flex-header">
+                    <label class="section-label">GST</label>
+                    <div class="checkbox-wrapper">
+                        <label class="custom-checkbox">
+                            <input type="checkbox" id="gstToggle" checked>
+                            <span class="checkmark"></span>
+                            Include GST
+                        </label>
+                    </div>
+                </div>
+                <div class="input-wrapper" id="gstInputWrapper">
+                    <label for="gstPercentInput" class="sub-label">Percentage (%)</label>
+                    <input type="number" id="gstPercentInput" value="3" min="0" step="0.1">
+                </div>
+            </section>
+
+            <!-- Actions -->
+            <div class="actions">
+                <button id="resetBtn" class="btn-secondary">Reset</button>
+            </div>
+
+        </div>
+
+        <!-- Output Display -->
+        <div class="result-card glass">
+            <div class="result-row">
+                <span>Value</span>
+                <span id="goldValueDisplay">₹ 0.00</span>
+            </div>
+            <div class="result-row">
+                <span>Wastage</span>
+                <span id="wastageDisplay">₹ 0.00</span>
+            </div>
+            <div class="result-row">
+                <span>GST <span id="gstPercentDisplay" class="small-text">(3%)</span></span>
+                <span id="gstDisplay">₹ 0.00</span>
+            </div>
+            <div class="result-divider"></div>
+            <div class="result-row total">
+                <span>Final Total</span>
+                <span id="finalTotalDisplay">₹ 0.00</span>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div id="settingsModal" class="modal hidden">
+            <div class="modal-content glass">
+                <div class="modal-header">
+                    <h2>Settings</h2>
+                    <span class="close-modal" id="closeSettingsBtn">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="input-wrapper">
+                        <label for="apiKeyInput">GoldAPI.io API Key</label>
+                        <input type="text" id="apiKeyInput" placeholder="Enter your API Key">
+                        <p class="helper-text">Get your free key at <a href="https://www.goldapi.io/" target="_blank">goldapi.io</a></p>
+                    </div>
+                    <button id="saveSettingsBtn" class="btn-primary">Save & Close</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
