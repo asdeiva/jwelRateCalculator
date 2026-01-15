@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gold-rate-calc-v4';
+const CACHE_NAME = 'gold-rate-calc-v7';
 const ASSETS = [
     './',
     './index.html',

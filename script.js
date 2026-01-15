@@ -20,9 +20,7 @@ const elements = {
     metalBtns: document.querySelectorAll('.metal-btn'),
     goldOptions: document.getElementById('goldOptions'),
     silverOptions: document.getElementById('silverOptions'),
-    fetchRateBtn: document.getElementById('fetchRateBtn'),
-    metalLabel: document.getElementById('metalLabel'),
-    appTitle: document.getElementById('appTitle')
+    fetchRateBtn: document.getElementById('fetchRateBtn')
 };
 
 // State
@@ -114,7 +112,6 @@ function switchMetal(metal) {
     // 2. Update Theme
     if (metal === 'silver') {
         document.body.classList.add('silver-mode');
-        elements.metalLabel.textContent = "Silver";
         elements.goldOptions.classList.add('hidden');
         elements.silverOptions.classList.remove('hidden');
         
@@ -123,8 +120,6 @@ function switchMetal(metal) {
         if (firstSilver) firstSilver.checked = true;
     } else {
         document.body.classList.remove('silver-mode');
-        // elements.appTitle.textContent = "Gold Rate Calculator";
-        elements.metalLabel.textContent = "Gold";
         elements.silverOptions.classList.add('hidden');
         elements.goldOptions.classList.remove('hidden');
         

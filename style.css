@@ -204,9 +204,9 @@ body:not(.silver-mode) .result-card { border-color: rgba(251, 191, 36, 0.3); }
 
 /* Responsive */
 /* Responsive */
-@media (max-width: 480px) {
-    body { padding: 10px; }
-    .container { padding: 0; width: 100%; }
+@media (max-width: 768px) {
+    body { padding: 10px; align-items: flex-start; } /* Align top so keyboard doesn't hide input */
+    .container { padding: 0; width: 100%; margin-top: 20px; }
     
     /* Stack Inputs vertically on small screens */
     .row { flex-direction: column; gap: 12px; }
